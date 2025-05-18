@@ -2,10 +2,10 @@ package org.kivislime.weather;
 
 import lombok.Value;
 
+//TODO: records? затестить
 @Value
 public class LocationRegistrationDto {
     String name;
-    Long userId;
     Double latitude;
     Double longitude;
 }
