@@ -11,22 +11,22 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Locations")
-public class Locations {
+@Table(name = "locations")
+public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "Name", nullable = false, unique = true, length = 100)
+    @Column(name = "name", nullable = false, unique = true, length = 100)
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "UserId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "Latitude", nullable = false)
+    @Column(name = "latitude", nullable = false)
     private Double latitude;
 
-    @Column(name = "Longitude", nullable = false)
+    @Column(name = "longitude", nullable = false)
     private Double longitude;
 }
