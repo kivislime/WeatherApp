@@ -1,30 +1,28 @@
 package org.kivislime.weather;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-    }
+    //TODO: @Transactional? Here 2 sql requests
+    public UserDto registrationUser(String login, String password) {
+        Optional<User> userOptional = userRepository.findByLogin(login);
+        userOptional.ifPresent(user -> {
+            throw new IllegalArgumentException("Login already exists");
+        });
 
-    public List<UserDto> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(userMapper::userToUserDto)
-                .toList();
-    }
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        userRepository.save(user);
 
-    public UserDto getUserById(Long id) {
-        return userRepository.findById(id)
-                .map(userMapper::userToUserDto)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return userMapper.toDto(user);
     }
 }
