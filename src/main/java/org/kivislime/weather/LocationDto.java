@@ -7,6 +7,7 @@ public class LocationDto {
     Long id;
     String name;
     Long userId;
-    Double latitude;
-    Double longitude;
+    Double lat;
+    Double lon;
+    Double temp;
 }
