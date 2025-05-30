@@ -3,22 +3,27 @@ package org.kivislime.weather.controller;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.kivislime.weather.dto.LoginFormDto;
+import org.kivislime.weather.dto.SignUpFormDto;
+import org.kivislime.weather.exception.UserAlreadyExistsException;
 import org.kivislime.weather.security.CookieFactory;
 import org.kivislime.weather.security.CookieProperties;
 import org.kivislime.weather.dto.SessionDto;
+import org.kivislime.weather.exception.InvalidCredentialsException;
 import org.kivislime.weather.service.SessionService;
 import org.kivislime.weather.dto.UserDto;
 import org.kivislime.weather.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 
-@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SessionController {
@@ -27,51 +32,72 @@ public class SessionController {
     private final CookieFactory cookieFactory;
     private final CookieProperties cookieProperties;
 
-    @GetMapping("/")
-    public String showLoginForm() {
-        return "sign-in";
-    }
-
-    @GetMapping("/sign-in")
-    public String showLoginFormAlias() {
+    @GetMapping({"/", "/sign-in"})
+    public String showLoginForm(Model model) {
+        model.addAttribute("loginForm", new LoginFormDto());
         return "sign-in";
     }
 
     //TODO: защита от XSS-атак?
     @PostMapping("/sign-in")
-    public String login(@RequestParam("login") String login,
-                        @RequestParam("password") String password,
-                        HttpServletResponse response) {
-        SessionDto sessionDto = sessionService.createSession(login, password);
+    public String login(@Valid @ModelAttribute("loginForm") LoginFormDto form,
+                        BindingResult bindingResult,
+                        Model model,
+                        HttpServletResponse response
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "sign-in";
+        }
 
-        Cookie cookie = cookieFactory.createCookie(sessionDto.getId().toString());
-        response.addCookie(cookie);
-
-        return "redirect:/locations";
+        try {
+            SessionDto sessionDto = sessionService.createSession(form.getLogin(), form.getPassword());
+            Cookie cookie = cookieFactory.createCookie(sessionDto.getId().toString());
+            response.addCookie(cookie);
+            return "redirect:/locations";
+        } catch (InvalidCredentialsException ex) {
+            model.addAttribute("loginError", "Invalid username or password");
+            return "sign-in";
+        }
     }
 
-    //TODO: совместить get & post типа if (login & password == null) return "sign-up"; И остальные тоже наверное то?
     @GetMapping("/sign-up")
-    public String showSignUpForm() {
+    public String showSignUpForm(Model model) {
+        model.addAttribute("signUpForm", new SignUpFormDto());
         return "sign-up";
     }
 
     @PostMapping("/sign-up")
-    public String registration(@RequestParam("login") String login,
-                               @RequestParam("password") String password,
-                               @RequestParam("confirmPassword") String confirmPassword) {
-//TODO: доделат
-//        if (!password.equals(confirmPassword)) {
-//            // Если хотите показать сообщение об ошибке, можно:
-//            // model.addAttribute("error", "Пароли не совпадают");
-//            // return "sign-up";
-//            return "redirect:/sign-up?error=passwordMismatch";
-//        }
+    public String registration(
+            @Valid @ModelAttribute("signUpForm") SignUpFormDto form,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return "sign-up";
+        }
 
-        UserDto userDto = userService.registrationUser(login, password);
+        if (!form.getPassword().equals(form.getConfirmPassword())) {
+            bindingResult.rejectValue(
+                    "confirmPassword",
+                    "password.mismatch",
+                    "Passwords do not match"
+            );
+            return "sign-up";
+        }
+
+        try {
+            userService.registrationUser(form.getLogin(), form.getPassword());
+        } catch (UserAlreadyExistsException ex) {
+            bindingResult.rejectValue(
+                    "login",
+                    "login.exists",
+                    "Username is already taken"
+            );
+            return "sign-up";
+        }
 
         return "redirect:/sign-in";
     }
+
 
     @PostMapping("/logout")
     public String logout(HttpServletRequest request,
