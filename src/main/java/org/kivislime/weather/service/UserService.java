@@ -7,6 +7,7 @@ import org.kivislime.weather.exception.UserAlreadyExistsException;
 import org.kivislime.weather.mapper.UserMapper;
 import org.kivislime.weather.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ public class UserService {
     private final UserMapper userMapper;
 
     //TODO: @Transactional? Here 2 sql requests
+    @Transactional
     public UserDto registrationUser(String login, String password) {
         Optional<User> userOptional = userRepository.findByLogin(login);
         userOptional.ifPresent(user -> {

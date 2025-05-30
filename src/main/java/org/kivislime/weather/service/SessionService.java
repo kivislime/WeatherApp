@@ -2,6 +2,7 @@ package org.kivislime.weather.service;
 
 import lombok.RequiredArgsConstructor;
 import org.kivislime.weather.exception.BadRequestException;
+import org.kivislime.weather.exception.InvalidCredentialsException;
 import org.kivislime.weather.exception.SessionNotFoundException;
 import org.kivislime.weather.exception.UserNotFoundException;
 import org.kivislime.weather.security.CookieProperties;
@@ -37,10 +38,10 @@ public class SessionService {
     @Transactional
     public SessionDto createSession(String login, String password) {
         User user = userRepository.findByLogin(login).orElseThrow(
-                () -> new BadRequestException(String.format("Incorrect login: %s", login))
+                () -> new InvalidCredentialsException(String.format("Incorrect login: %s", login))
         );
         if (!user.getPassword().equals(password)) {
-            throw new BadRequestException(String.format("Incorrect password for: %s", login));
+            throw new InvalidCredentialsException(String.format("Incorrect password for: %s", login));
         }
 
         Session session = new Session();
