@@ -1,12 +1,13 @@
 package org.kivislime.weather.service;
 
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+    import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.dto.LocationDto;
 import org.kivislime.weather.dto.LocationRegistrationDto;
 import org.kivislime.weather.dto.LocationWeatherDto;
 import org.kivislime.weather.entity.Location;
 import org.kivislime.weather.entity.User;
+import org.kivislime.weather.exception.LocationLimitExceededException;
 import org.kivislime.weather.exception.UserNotFoundException;
 import org.kivislime.weather.mapper.LocationMapper;
 import org.kivislime.weather.repository.LocationRepository;
@@ -14,27 +15,58 @@ import org.kivislime.weather.repository.UserRepository;
 import org.kivislime.weather.client.WeatherApiClient;
 import org.kivislime.weather.client.WeatherResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
-public class LocationsService {
+public class LocationService {
     private final LocationRepository locationRepository;
     private final LocationMapper locationMapper;
     private final UserRepository userRepository;
     private final WeatherApiClient weatherApiClient;
+    private final String iconBaseUrl;
+    private final int maxLocationsPerUser;
 
+    public LocationService(
+            LocationRepository locationRepository,
+            LocationMapper locationMapper,
+            UserRepository userRepository,
+            WeatherApiClient weatherApiClient,
+            @Value("${openweather.icon-base-url}") String iconBaseUrl,
+            //TODO: создать отдельный класс настроек для всякой app.location, scheduler.pool-size=1? Чтобы без таких приколов
+            @Value("${app.location.max-per-user}") int maxLocationsPerUser
+    ) {
+        this.locationRepository = locationRepository;
+        this.locationMapper = locationMapper;
+        this.userRepository = userRepository;
+        this.weatherApiClient = weatherApiClient;
+        this.iconBaseUrl = iconBaseUrl;
+        this.maxLocationsPerUser = maxLocationsPerUser;
+    }
+
+    @Transactional
     public LocationDto addLocation(Long userId, Double temperature, LocationRegistrationDto locationRegistrationDto) {
         Location locationRegistration = locationMapper.toEntity(locationRegistrationDto);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User not found id: %s", userId)));
-
+                .orElseThrow(() -> new UserNotFoundException(String.format("id: %s", userId)));
         locationRegistration.setUser(user);
-        Location location = locationRepository.save(locationRegistration);
+
+        long countLocations = locationRepository.countByUser(user);
+
+        if (countLocations >= maxLocationsPerUser) {
+            throw new LocationLimitExceededException(String.format("user_id: %s", userId));
+        }
+
+        Location location = locationRepository.findByUserIdAndLatitudeAndLongitude(userId,
+                        locationRegistrationDto.getLatitude(),
+                        locationRegistration.getLongitude())
+                .orElseGet(() -> locationRepository.save(locationRegistration));
+
         return locationMapper.toDto(location, temperature);
     }
 
@@ -50,10 +82,6 @@ public class LocationsService {
                             loc.getLatitude().toString(),
                             loc.getLongitude().toString()
                     );
-                    //TODO: тоже строки картинки захардкожена
-                    //How to get icon URL
-                    //For code 500 - light rain icon = "10d". See below a full list of codes
-                    //URL is https://openweathermap.org/img/wn/10d@2x.png
                     return new LocationWeatherDto(
                             loc.getId(),
                             loc.getName(),
@@ -65,8 +93,7 @@ public class LocationsService {
                             weather.getMain().getFeelsLike(),
                             weather.getWeather().get(0).getDescription(),
                             weather.getMain().getHumidity(),
-                            "https://openweathermap.org/img/wn/"
-                                    + weather.getWeather().get(0).getIcon() + "@2x.png"
+                            String.format("%s%s@2x.png", iconBaseUrl, weather.getWeather().get(0).getIcon())
                     );
                 }))
                 .toList();
