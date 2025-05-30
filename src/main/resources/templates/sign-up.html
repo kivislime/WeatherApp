@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Weather Viewer – Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link th:href="@{/static/style.css}" rel="stylesheet">
+
+    <style>
+        .header-block {
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <div class="header-block">
+        <img th:src="@{/images/weather-app.png}" alt="Weather Icon" width="80" height="80" class="mb-2">
+        <h2 class="text-center">Sign Up</h2>
+    </div>
+
+    <form th:action="@{/sign-up}"
+          th:object="${signUpForm}"
+          method="post"
+          class="row justify-content-center">
+
+        <div class="col-12 col-lg-4 col-md-6 col-sm-12 mt-4">
+
+            <!-- Общие ошибки (например, несовпадение паролей) -->
+            <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+                <ul>
+                    <li th:each="err : ${#fields.globalErrors()}"
+                        th:text="${err.defaultMessage}"></li>
+                </ul>
+            </div>
+
+            <!-- Поле логина -->
+            <div class="mb-3">
+                <label for="login" class="form-label">Username</label>
+                <input
+                        type="text"
+                        id="login"
+                        class="form-control"
+                        th:field="*{login}"
+                        placeholder="Enter username"
+                />
+                <div th:if="${#fields.hasErrors('login')}"
+                     th:errors="*{login}"
+                     class="text-danger small mt-1"></div>
+            </div>
+
+            <!-- Поле пароля -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input
+                        type="password"
+                        id="password"
+                        class="form-control"
+                        th:field="*{password}"
+                        placeholder="Enter password"
+                />
+                <div th:if="${#fields.hasErrors('password')}"
+                     th:errors="*{password}"
+                     class="text-danger small mt-1"></div>
+            </div>
+
+            <!-- Повтор пароля -->
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Repeat Password</label>
+                <input
+                        type="password"
+                        id="confirmPassword"
+                        class="form-control"
+                        th:field="*{confirmPassword}"
+                        placeholder="Repeat password"
+                />
+                <div th:if="${#fields.hasErrors('confirmPassword')}"
+                     th:errors="*{confirmPassword}"
+                     class="text-danger small mt-1"></div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mt-3">Sign Up</button>
+            <p class="mt-2 text-center">
+                Already have an account? <a th:href="@{/sign-in}">Sign in here</a>
+            </p>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
