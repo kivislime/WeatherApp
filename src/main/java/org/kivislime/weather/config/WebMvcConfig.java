@@ -47,22 +47,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         return resolver;
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //TODO: в конфиг файл?
         registry
-                .addResourceHandler("/style.css")
-                .addResourceLocations("classpath:/static/style.css");
+                .addResourceHandler("/static/**")
+                .addResourceLocations("classpath:/static/");
 
         registry
                 .addResourceHandler("/images/**")
