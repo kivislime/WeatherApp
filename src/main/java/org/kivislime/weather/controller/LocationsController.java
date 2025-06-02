@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-//TODO: ТЕСТЫ ЗАПИЛИТЬ, УЗНАЧТЬ СНАЧАЛА для каких классов они пиляться, потом сделать ширфование паролей, либо сначала шифрование
 @Controller
 @RequiredArgsConstructor
 public class LocationsController {

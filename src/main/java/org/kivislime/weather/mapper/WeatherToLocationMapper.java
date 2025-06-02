@@ -2,6 +2,8 @@ package org.kivislime.weather.mapper;
 
 import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationRegistrationDto;
+import org.kivislime.weather.dto.LocationWeatherDto;
+import org.kivislime.weather.entity.Location;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

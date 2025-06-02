@@ -2,6 +2,7 @@ package org.kivislime.weather.dto;
 
 import lombok.Value;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -9,5 +10,5 @@ import java.util.UUID;
 public class SessionDto {
     UUID id;
     Long userId;
-    Date expiresAt;
+    Instant expiresAt;
 }

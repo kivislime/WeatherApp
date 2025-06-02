@@ -13,7 +13,6 @@ import org.kivislime.weather.security.CookieProperties;
 import org.kivislime.weather.dto.SessionDto;
 import org.kivislime.weather.exception.InvalidCredentialsException;
 import org.kivislime.weather.service.SessionService;
-import org.kivislime.weather.dto.UserDto;
 import org.kivislime.weather.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,7 +38,6 @@ public class SessionController {
         return "sign-in";
     }
 
-    //TODO: защита от XSS-атак?
     @PostMapping("/sign-in")
     public String login(@Valid @ModelAttribute("loginForm") LoginFormDto form,
                         BindingResult bindingResult,
@@ -98,21 +97,22 @@ public class SessionController {
         return "redirect:/sign-in";
     }
 
-
+//TODO: пробежка по куки дублируется
     @PostMapping("/logout")
     public String logout(HttpServletRequest request,
                          HttpServletResponse response) {
-        //TODO: null -> exception?
-        String uuidCookie = Arrays.stream(request.getCookies())
-                .filter((x) -> x.getName().equals(cookieProperties.getCookieName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
+        if (request.getSession().getId() != null) {
+            Arrays.stream(request.getCookies())
+                    .filter((x) -> x.getName().equals(cookieProperties.getCookieName()))
+                    .findFirst()
+                    .ifPresent(cookie -> {
+                        String cookieToDelete = cookie.getValue();
+                        sessionService.deleteSession(cookieToDelete);
 
-        sessionService.deleteSession(uuidCookie);
-        Cookie deleteCookie = cookieFactory.createCookie(uuidCookie);
-        response.addCookie(deleteCookie);
-
+                        Cookie expired = cookieFactory.deleteCookie(cookieToDelete);
+                        response.addCookie(expired);
+                    });
+        }
         return "redirect:/sign-in";
     }
 }
