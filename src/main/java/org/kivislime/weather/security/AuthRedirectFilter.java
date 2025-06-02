@@ -6,20 +6,29 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.kivislime.weather.service.SessionService;
 import org.kivislime.weather.dto.UserDto;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Component("authRedirectFilter")
 public class AuthRedirectFilter implements Filter {
     private final SessionService sessionService;
     private final CookieProperties cookieProperties;
+    private final String rawPublicUrls;
+    private final AntPathMatcher matcher = new AntPathMatcher();
 
-    public AuthRedirectFilter(SessionService sessionService, CookieProperties cookieProperties) {
+    public AuthRedirectFilter(SessionService sessionService,
+                              CookieProperties cookieProperties,
+                              @Value("${security.public-urls}")
+                              String rawPublicUrls) {
         this.sessionService = sessionService;
         this.cookieProperties = cookieProperties;
+        this.rawPublicUrls = rawPublicUrls;
     }
 
     @Override
@@ -32,15 +41,14 @@ public class AuthRedirectFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
 
         String path = req.getRequestURI().substring(req.getContextPath().length());
-        //TODO: захардкожено ведь?
-        //TODO: если есть куки пусть переходить сразу на /locations ---------------------------------------
-        if (path.equals("/") ||
-                path.equals("/sign-in") ||
-                path.equals("/sign-up") ||
-                path.equals("/registration") ||
-                path.startsWith("/css/") ||
-                path.startsWith("/js/") ||
-                path.startsWith("/images/")) {
+
+        List<String> publicUrls = Arrays.stream(rawPublicUrls.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        boolean isPublic = publicUrls.stream().anyMatch(publicUrl -> matcher.match(publicUrl, path));
+        if (isPublic) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
