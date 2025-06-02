@@ -14,6 +14,7 @@ import org.kivislime.weather.mapper.SessionMapper;
 import org.kivislime.weather.mapper.UserMapper;
 import org.kivislime.weather.repository.SessionRepository;
 import org.kivislime.weather.repository.UserRepository;
+import org.kivislime.weather.security.PasswordUtil;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,8 @@ public class SessionService {
         User user = userRepository.findByLogin(login).orElseThrow(
                 () -> new InvalidCredentialsException(String.format("Incorrect login: %s", login))
         );
-        if (!user.getPassword().equals(password)) {
+
+        if (!PasswordUtil.checkPassword(password, user.getPassword())) {
             throw new InvalidCredentialsException(String.format("Incorrect password for: %s", login));
         }
 
