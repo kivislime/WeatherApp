@@ -1,4 +1,4 @@
-package org.kivislime.weather.security;
+package org.kivislime.weather.cookie;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

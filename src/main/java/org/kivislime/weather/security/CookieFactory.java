@@ -1,4 +1,4 @@
-package org.kivislime.weather.security;
+package org.kivislime.weather.cookie;
 
 import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
