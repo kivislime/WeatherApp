@@ -20,9 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.UUID;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +35,6 @@ public class SessionService {
     private final Clock clock;
     private final CookieProperties cookieProperties;
 
-    //TODO: its okay if userRepository injected in session service ?
-    //TODO: Transactional норм тема?
     @Transactional
     public SessionDto createSession(String login, String password) {
         User user = userRepository.findByLogin(login).orElseThrow(
@@ -55,7 +54,7 @@ public class SessionService {
         session.setExpiresAt(expires);
 
         sessionRepository.save(session);
-        return sessionMapper.toSessionDto(session);
+        return sessionMapper.toDto(session);
     }
 
     @Transactional
@@ -74,9 +73,16 @@ public class SessionService {
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public UserDto findUserDtoBySessionUuid(String sessionUuid) {
-        Session session = sessionRepository.findById(UUID.fromString(sessionUuid))
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(sessionUuid);
+        } catch (IllegalArgumentException ex) {
+            throw new BadRequestException("Invalid session ID format: " + sessionUuid);
+        }
+
+        Session session = sessionRepository.findById(uuid)
                 .orElseThrow(() -> new SessionNotFoundException(String.format("%s", sessionUuid)));
 
         User user = userRepository.findById(session.getUserId())
@@ -85,9 +91,8 @@ public class SessionService {
         return userMapper.toDto(user);
     }
 
-    @Transactional
+    @Transactional(propagation = REQUIRES_NEW)
     public int removeAllExpired() {
-        return sessionRepository.deleteByExpiresAtBefore(Instant.now(clock).minus(
-                Duration.ofSeconds(cookieProperties.getCookieMaxAge())));
+        return sessionRepository.deleteByExpiresAtBefore(Instant.now(clock));
     }
 }
