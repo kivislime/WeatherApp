@@ -3,7 +3,6 @@ package org.kivislime.weather.security;
 import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Component;
 
-//TODO: объединить куки ? В конфиг?
 @Component
 public class CookieFactory {
     private final CookieProperties cookieProperties;
