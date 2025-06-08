@@ -87,7 +87,6 @@ public class WeatherApiClient {
 
             String responseBody = response.getBody();
             return objectMapper.readValue(responseBody, WeatherResponse.class);
-
         } catch (HttpClientErrorException | HttpServerErrorException ex) {
             HttpStatusCode statusCode = ex.getStatusCode();
             String errorBody = ex.getResponseBodyAsString();
