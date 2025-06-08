@@ -24,19 +24,6 @@ import java.util.Properties;
 public class JpaConfig {
 
     @Bean
-    public DataSource dataSource(@Value("${spring.datasource.driver-class-name}") String driverName,
-                                 @Value("${spring.datasource.url}") String datasourceUrl,
-                                 @Value("${spring.datasource.username}") String username,
-                                 @Value("${spring.datasource.password}") String password) {
-        DriverManagerDataSource ds = new DriverManagerDataSource();
-        ds.setDriverClassName(driverName);
-        ds.setUrl(datasourceUrl);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        return ds;
-    }
-
-    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
                                                                        @Value("${spring.jpa.hibernate.ddl-auto}") String ddlAuto) {
         LocalContainerEntityManagerFactoryBean factory =

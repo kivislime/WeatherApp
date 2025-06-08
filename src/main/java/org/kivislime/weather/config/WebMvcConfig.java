@@ -1,12 +1,12 @@
 package org.kivislime.weather.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.kivislime.weather.security.AuthInterceptor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.ViewResolver;
@@ -20,6 +20,14 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
         "org.kivislime.weather.controller"
 })
 public class WebMvcConfig implements WebMvcConfigurer {
+    private final AuthInterceptor authInterceptor;
+    private final String[] publicUrls;
+
+    public WebMvcConfig(AuthInterceptor authInterceptor,
+                        @Value("${security.public-urls}") String[] publicUrls) {
+        this.authInterceptor = authInterceptor;
+        this.publicUrls = publicUrls;
+    }
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -52,9 +60,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry
                 .addResourceHandler("/static/**")
                 .addResourceLocations("classpath:/static/");
-
         registry
                 .addResourceHandler("/images/**")
                 .addResourceLocations("classpath:/static/images/");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(authInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(publicUrls);
     }
 }
