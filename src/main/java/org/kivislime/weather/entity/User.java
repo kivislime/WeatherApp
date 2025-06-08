@@ -13,7 +13,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(
+        name = "users", uniqueConstraints = @UniqueConstraint(
+        columnNames = {"login"}
+      )
+)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
