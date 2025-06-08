@@ -1,8 +1,9 @@
 package org.kivislime.weather.service;
 
-import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.client.GeocodingResponse;
+import org.kivislime.weather.client.WeatherApiClient;
+import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationDto;
 import org.kivislime.weather.dto.LocationSearchResultDto;
 import org.kivislime.weather.dto.LocationWeatherDto;
@@ -12,9 +13,8 @@ import org.kivislime.weather.exception.UserNotFoundException;
 import org.kivislime.weather.mapper.WeatherMapper;
 import org.kivislime.weather.repository.LocationRepository;
 import org.kivislime.weather.repository.UserRepository;
-import org.kivislime.weather.client.WeatherApiClient;
-import org.kivislime.weather.client.WeatherResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;

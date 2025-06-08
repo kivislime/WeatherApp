@@ -8,7 +8,6 @@ import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationWeatherDto;
 import org.kivislime.weather.entity.Location;
 import org.kivislime.weather.entity.User;
-import org.kivislime.weather.service.WeatherCacheService;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 

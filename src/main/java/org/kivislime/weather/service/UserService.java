@@ -4,13 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.kivislime.weather.dto.UserDto;
 import org.kivislime.weather.entity.User;
 import org.kivislime.weather.exception.UserAlreadyExistsException;
-import org.kivislime.weather.exception.UserNotFoundException;
 import org.kivislime.weather.mapper.UserMapper;
 import org.kivislime.weather.repository.UserRepository;
 import org.kivislime.weather.security.PasswordUtil;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Optional;
 
