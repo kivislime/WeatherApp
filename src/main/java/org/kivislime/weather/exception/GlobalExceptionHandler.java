@@ -1,14 +1,12 @@
-package org.kivislime.weather.controller;
+package org.kivislime.weather.exception;
 
 import lombok.extern.slf4j.Slf4j;
-import org.kivislime.weather.exception.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-//TODO: а он разве должен лежать в конфиге??
-@ControllerAdvice
+@ControllerAdvice(basePackages = "org.kivislime.weather.controller")
 @Slf4j
 public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
@@ -44,7 +42,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(LocationLimitExceededException.class)
     public ModelAndView handleLocationLimitExceeded(LocationLimitExceededException ex) {
         log.error("Location limit exceeded: {}", ex.getMessage(), ex);
-        return buildErrorView(429, "Location limit exceeded");
+        return buildErrorView(429, "Too many locations. Please remove one before adding another");
     }
 
     @ExceptionHandler(ExternalApiException.class)
