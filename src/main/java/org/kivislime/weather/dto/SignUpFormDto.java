@@ -1,6 +1,7 @@
 package org.kivislime.weather.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,8 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SignUpFormDto {
-    @NotBlank(message = "The login must not be empty")
-    @Size(min = 3, max = 20, message = "The login must contain from {min} to {max} characters")
+    @Pattern(
+            regexp = "^[A-Za-z0-9]{3,20}$",
+            message = "Login must be 3–20 characters, only Latin letters and digits"
+    )
     private String login;
 
     @NotBlank(message = "The password must not be empty")

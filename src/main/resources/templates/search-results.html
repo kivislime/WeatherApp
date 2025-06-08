@@ -8,7 +8,6 @@
             rel="stylesheet"
     >
     <link th:href="@{/static/style.css}" rel="stylesheet">
-
 </head>
 <body>
 
@@ -33,6 +32,11 @@
 
 <section id="page-content">
     <div class="container mt-4">
+        <div th:if="${deleteError}" class="alert alert-danger" role="alert"
+             th:text="${deleteError}">
+            Ошибка!
+        </div>
+
         <form th:action="@{/locations/search}" method="get" class="d-flex my-4">
             <div class="input-group location-search-input-group me-3">
                 <input
@@ -72,16 +76,14 @@
                                th:text="'Country: ' + ${res.country}">Country: XX</p>
                             <p class="card-text mb-3"
                                th:text="${res.state} != null
-                                        ? 'State: ' + ${res.state}
-                                        : 'State: N/A'">
+                                    ? 'State: ' + ${res.state}
+                                    : 'State: N/A'">
                                 State: N/A
                             </p>
 
                             <div class="mt-auto">
                                 <form th:action="@{/locations/search}" method="post">
                                     <input type="hidden" name="name" th:value="${res.name}"/>
-                                    <input type="hidden" name="lat" th:value="${res.lat}"/>
-                                    <input type="hidden" name="lon" th:value="${res.lon}"/>
                                     <button type="submit" class="btn btn-primary w-100">Add</button>
                                 </form>
                             </div>

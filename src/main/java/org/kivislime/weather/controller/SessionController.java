@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.dto.LoginFormDto;
 import org.kivislime.weather.dto.SignUpFormDto;
 import org.kivislime.weather.exception.UserAlreadyExistsException;
@@ -22,8 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.Arrays;
-import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SessionController {
@@ -55,6 +56,7 @@ public class SessionController {
             return "redirect:/locations";
         } catch (InvalidCredentialsException ex) {
             model.addAttribute("loginError", "Invalid username or password");
+            log.error("Invalid username or password", ex);
             return "sign-in";
         }
     }
@@ -86,6 +88,7 @@ public class SessionController {
         try {
             userService.registrationUser(form.getLogin(), form.getPassword());
         } catch (UserAlreadyExistsException ex) {
+            log.error("User already exists", ex);
             bindingResult.rejectValue(
                     "login",
                     "login.exists",
@@ -97,7 +100,6 @@ public class SessionController {
         return "redirect:/sign-in";
     }
 
-//TODO: пробежка по куки дублируется
     @PostMapping("/logout")
     public String logout(HttpServletRequest request,
                          HttpServletResponse response) {
