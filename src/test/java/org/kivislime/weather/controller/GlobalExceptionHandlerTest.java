@@ -86,7 +86,7 @@ class GlobalExceptionHandlerTest {
 
         assertThat(mav.getViewName()).isEqualTo("error");
         assertThat(mav.getModel()).containsEntry("statusCode", 429);
-        assertThat(mav.getModel()).containsEntry("exceptionMessage", "Location limit exceeded");
+        assertThat(mav.getModel()).containsEntry("exceptionMessage", "Too many locations. Please remove one before adding another");
     }
 
     @Test
