@@ -30,8 +30,6 @@ class WeatherApiClientTest {
     @Mock
     private RestTemplate restTemplate;
 
-    private ObjectMapper objectMapper;
-
     private WeatherApiClient weatherApiClient;
 
     private static final String BASE_URL      = "https://api.openweathermap.org/data/2.5/weather";
@@ -41,7 +39,7 @@ class WeatherApiClientTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
         weatherApiClient = new WeatherApiClient(
                 restTemplate,
