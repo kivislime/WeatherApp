@@ -39,9 +39,11 @@
 
         <form th:action="@{/locations/search}" method="get" class="d-flex my-4">
             <div class="input-group location-search-input-group me-3">
+                <label for="location-name" class="visually-hidden">Location name</label>
                 <input
                         class="form-control"
                         type="text"
+                        id="location-name"
                         name="name"
                         placeholder="Enter location"
                         th:value="${searchQuery}"

@@ -42,7 +42,9 @@
 
         <form th:action="@{/locations/search}" method="get" class="d-flex my-4">
             <div class="input-group location-search-input-group me-3">
+                <label for="locationNameInput" class="visually-hidden">Location name</label>
                 <input
+                        id="locationNameInput"
                         class="form-control"
                         type="text"
                         name="name"
@@ -53,8 +55,7 @@
                         class="btn btn-outline-secondary btn-sm clear-input-button"
                         type="button"
                         onclick="this.previousElementSibling.value=''"
-                >&times;
-                </button>
+                >&times;</button>
             </div>
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
