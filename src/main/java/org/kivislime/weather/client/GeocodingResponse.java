@@ -1,15 +1,15 @@
-    package org.kivislime.weather.client;
+package org.kivislime.weather.client;
 
-    import lombok.Getter;
-    import lombok.Setter;
+import lombok.Getter;
+import lombok.Setter;
 
-    @Setter
-    @Getter
-    public class GeocodingResponse {
-        private String name;
-        private Double lat;
-        private Double lon;
+@Setter
+@Getter
+public class GeocodingResponse {
+    private String name;
+    private Double lat;
+    private Double lon;
 
-        private String country;
-        private String state;
-    }
+    private String country;
+    private String state;
+}
