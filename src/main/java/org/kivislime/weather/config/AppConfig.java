@@ -13,9 +13,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Configuration
-@PropertySource({"classpath:application.properties",
-        "classpath:secrets.properties",
-        "classpath:application-${spring.profiles.active}.properties"})
+@PropertySource({"classpath:application.properties", "classpath:secrets.properties"})
+@PropertySource(value = "classpath:application-${spring.profiles.active}.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = {
         "org.kivislime.weather.service",
         "org.kivislime.weather.repository",
