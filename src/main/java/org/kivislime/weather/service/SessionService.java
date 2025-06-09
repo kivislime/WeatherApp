@@ -1,6 +1,7 @@
 package org.kivislime.weather.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.dto.SessionDto;
 import org.kivislime.weather.dto.UserDto;
 import org.kivislime.weather.entity.Session;
@@ -25,6 +26,7 @@ import java.util.UUID;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SessionService {
@@ -53,6 +55,7 @@ public class SessionService {
         Instant expires = now.plusSeconds(cookieProperties.getCookieMaxAge());
         session.setExpiresAt(expires);
 
+        log.info("Created new session for user: {}", login);
         sessionRepository.save(session);
         return sessionMapper.toDto(session);
     }

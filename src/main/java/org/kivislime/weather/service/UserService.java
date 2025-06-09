@@ -1,6 +1,7 @@
 package org.kivislime.weather.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.dto.UserDto;
 import org.kivislime.weather.entity.User;
 import org.kivislime.weather.exception.UserAlreadyExistsException;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -36,6 +38,7 @@ public class UserService {
             user = userRepository.findByLogin(login)
                     .orElseThrow(() -> new UserAlreadyExistsException("Unique constraint failed but record not found"));
         }
+        log.info("User registration successful: {}", login);
         return userMapper.toDto(user);
     }
 }
