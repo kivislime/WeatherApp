@@ -2,17 +2,18 @@ package org.kivislime.weather.config;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(@NonNull ServletContext servletContext) throws ServletException {
         String jvmProfile = System.getProperty("spring.profiles.active");
         if (jvmProfile != null && !jvmProfile.isBlank()) {
             servletContext.setInitParameter("spring.profiles.active", jvmProfile);
         } else {
-            servletContext.setInitParameter("spring.profiles.active", "dev");
+            servletContext.setInitParameter("spring.profiles.active", "prod");
         }
 
         super.onStartup(servletContext);
@@ -35,7 +36,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     }
 
     @Override
-    protected String[] getServletMappings() {
+    protected @NonNull String[] getServletMappings() {
         return new String[]{"/"};
     }
 
