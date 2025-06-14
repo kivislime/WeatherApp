@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class WeatherApiClientTest {
+class IWeatherApiClientImplTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    private WeatherApiClient weatherApiClient;
+    private IWeatherApiClientImpl weatherApiClientImpl;
 
     private static final String BASE_URL      = "https://api.openweathermap.org/data/2.5/weather";
     private static final String GEOCODING_URL = "https://api.openweathermap.org/geo/1.0/direct";
@@ -41,7 +41,7 @@ class WeatherApiClientTest {
     void setUp() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        weatherApiClient = new WeatherApiClient(
+        weatherApiClientImpl = new IWeatherApiClientImpl(
                 restTemplate,
                 objectMapper,
                 BASE_URL,
@@ -64,7 +64,7 @@ class WeatherApiClientTest {
                 eq(String.class))
         ).thenReturn(ResponseEntity.ok(fakeJson));
 
-        var result = weatherApiClient.fetchCurrentWeatherByCoordinates("55.75", "37.62");
+        var result = weatherApiClientImpl.fetchCurrentWeatherByCoordinates("55.75", "37.62");
 
         assertThat(result).isNotNull();
         assertThat(result.getMain().getTemp()).isEqualTo(10.5);
@@ -98,7 +98,7 @@ class WeatherApiClientTest {
                 eq(String.class))
         ).thenReturn(ResponseEntity.ok(fakeJson));
 
-        var result = weatherApiClient.fetchCurrentWeatherByName("Moscow");
+        var result = weatherApiClientImpl.fetchCurrentWeatherByName("Moscow");
 
         assertThat(result.getMain().getTemp()).isEqualTo(20.0);
         assertThat(result.getWeather().get(0).getDescription()).isEqualTo("rain");
@@ -136,7 +136,7 @@ class WeatherApiClientTest {
 
         LocationNotFoundException ex = assertThrows(
                 LocationNotFoundException.class,
-                () -> weatherApiClient.fetchCurrentWeatherByName("Atlantis")
+                () -> weatherApiClientImpl.fetchCurrentWeatherByName("Atlantis")
         );
 
         assertThat(ex.getMessage()).isEqualTo("city not found");
@@ -160,7 +160,7 @@ class WeatherApiClientTest {
 
         ExternalApiException ex = assertThrows(
                 ExternalApiException.class,
-                () -> weatherApiClient.fetchCurrentWeatherByCoordinates("0", "0")
+                () -> weatherApiClientImpl.fetchCurrentWeatherByCoordinates("0", "0")
         );
 
         assertThat(ex.getMessage()).isEqualTo("invalid api key");
@@ -184,7 +184,7 @@ class WeatherApiClientTest {
 
         QuotaExceededException ex = assertThrows(
                 QuotaExceededException.class,
-                () -> weatherApiClient.fetchCurrentWeatherByName("Paris")
+                () -> weatherApiClientImpl.fetchCurrentWeatherByName("Paris")
         );
 
         assertThat(ex.getMessage()).isEqualTo("quota exceeded");
@@ -206,7 +206,7 @@ class WeatherApiClientTest {
 
         ExternalApiException ex = assertThrows(
                 ExternalApiException.class,
-                () -> weatherApiClient.fetchCurrentWeatherByCoordinates("10", "10")
+                () -> weatherApiClientImpl.fetchCurrentWeatherByCoordinates("10", "10")
         );
 
         assertThat(ex.getMessage()).isEqualTo("500 INTERNAL_SERVER_ERROR: server error");
@@ -225,7 +225,7 @@ class WeatherApiClientTest {
 
         ExternalApiException ex = assertThrows(
                 ExternalApiException.class,
-                () -> weatherApiClient.fetchCurrentWeatherByName("Berlin")
+                () -> weatherApiClientImpl.fetchCurrentWeatherByName("Berlin")
         );
 
         assertThat(ex.getMessage())
@@ -247,7 +247,7 @@ class WeatherApiClientTest {
         when(restTemplate.getForObject(any(URI.class), eq(GeocodingResponse[].class)))
                 .thenReturn(array);
 
-        List<GeocodingResponse> result = weatherApiClient.fetchCurrentGeocodingByName(city);
+        List<GeocodingResponse> result = weatherApiClientImpl.fetchCurrentGeocodingByName(city);
 
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getName()).isEqualTo("London");
@@ -268,7 +268,7 @@ class WeatherApiClientTest {
         when(restTemplate.getForObject(any(URI.class), eq(GeocodingResponse[].class)))
                 .thenReturn(null);
 
-        List<GeocodingResponse> result = weatherApiClient.fetchCurrentGeocodingByName("UnknownCity");
+        List<GeocodingResponse> result = weatherApiClientImpl.fetchCurrentGeocodingByName("UnknownCity");
 
         assertThat(result).isEmpty();
     }

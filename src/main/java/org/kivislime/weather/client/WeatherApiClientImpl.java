@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class WeatherApiClient {
+public class IWeatherApiClientImpl implements IWeatherApiClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final String baseUrl;
@@ -27,7 +27,7 @@ public class WeatherApiClient {
     private final String apiKey;
     private final int maxCities;
 
-    public WeatherApiClient(
+    public IWeatherApiClientImpl(
             RestTemplate restTemplate,
             ObjectMapper objectMapper,
             @Value("${openweather.weather.url}") String baseUrl,
@@ -42,7 +42,6 @@ public class WeatherApiClient {
         this.apiKey = apiKey;
         this.maxCities = maxCities;
     }
-
 
     public WeatherResponse fetchCurrentWeatherByCoordinates(String latitude, String longitude) {
         URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)

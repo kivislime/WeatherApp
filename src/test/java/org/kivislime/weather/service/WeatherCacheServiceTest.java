@@ -1,13 +1,12 @@
-package org.kivislime.weather.service;
+package org.kivislime.weather.client;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.kivislime.weather.client.WeatherApiClient;
-import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationWeatherDto;
 import org.kivislime.weather.entity.Location;
 import org.kivislime.weather.entity.User;
+import org.kivislime.weather.service.WeatherCacheService;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -23,7 +22,7 @@ import static org.mockito.Mockito.when;
 class WeatherCacheServiceTest {
 
     @Mock
-    private WeatherApiClient weatherApiClient;
+    private WeatherApiClientImpl weatherApiClientImpl;
 
     private final String iconBaseUrl = "http://openweathermap.org/img/";
 
@@ -31,7 +30,7 @@ class WeatherCacheServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new WeatherCacheService(weatherApiClient, iconBaseUrl);
+        service = new WeatherCacheService(weatherApiClientImpl, iconBaseUrl);
     }
 
     @Test
@@ -59,7 +58,7 @@ class WeatherCacheServiceTest {
         fakeResponse.setMain(main);
         fakeResponse.setWeather(List.of(w));
 
-        when(weatherApiClient.fetchCurrentWeatherByCoordinates(
+        when(weatherApiClientImpl.fetchCurrentWeatherByCoordinates(
                 eq("12.34"), eq("56.78")
         )).thenReturn(fakeResponse);
 
@@ -78,7 +77,7 @@ class WeatherCacheServiceTest {
         assertThat(dto.getIconUrl())
                 .isEqualTo(iconBaseUrl + "01d@2x.png");
 
-        verify(weatherApiClient).fetchCurrentWeatherByCoordinates("12.34", "56.78");
+        verify(weatherApiClientImpl).fetchCurrentWeatherByCoordinates("12.34", "56.78");
     }
 
     @Test
@@ -102,7 +101,7 @@ class WeatherCacheServiceTest {
         fakeResponse.setMain(main);
         fakeResponse.setWeather(Collections.emptyList());
 
-        when(weatherApiClient.fetchCurrentWeatherByCoordinates(
+        when(weatherApiClientImpl.fetchCurrentWeatherByCoordinates(
                 eq("1.1"), eq("2.2")
         )).thenReturn(fakeResponse);
 
@@ -113,6 +112,6 @@ class WeatherCacheServiceTest {
         assertThat(dto.getHumidity()).isEqualTo(50);
         assertThat(dto.getDescription()).isEmpty();
         assertThat(dto.getIconUrl()).isEqualTo(iconBaseUrl + "unknown@2x.png");
-        verify(weatherApiClient).fetchCurrentWeatherByCoordinates("1.1", "2.2");
+        verify(weatherApiClientImpl).fetchCurrentWeatherByCoordinates("1.1", "2.2");
     }
 }
