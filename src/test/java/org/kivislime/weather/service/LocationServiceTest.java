@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.kivislime.weather.client.GeocodingResponse;
-import org.kivislime.weather.client.WeatherApiClient;
+import org.kivislime.weather.client.WeatherApiClientImpl;
 import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationDto;
 import org.kivislime.weather.dto.LocationSearchResultDto;
@@ -39,7 +39,7 @@ class LocationServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private WeatherApiClient weatherApiClient;
+    private WeatherApiClientImpl weatherApiClientImpl;
 
     @Mock
     private WeatherMapper weatherMapper;
@@ -63,7 +63,7 @@ class LocationServiceTest {
         locationService = new LocationService(
                 locationRepository,
                 userRepository,
-                weatherApiClient,
+                weatherApiClientImpl,
                 weatherMapper,
                 weatherCacheService,
                 sameThreadExecutor,
@@ -79,7 +79,7 @@ class LocationServiceTest {
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessageContaining("id: 5");
 
-        verify(weatherApiClient, never()).fetchCurrentWeatherByName(anyString());
+        verify(weatherApiClientImpl, never()).fetchCurrentWeatherByName(anyString());
         verify(locationPersistenceService, never()).getOrCreate(any(), anyString(), anyDouble(), anyDouble(), anyDouble());
     }
 
@@ -109,7 +109,7 @@ class LocationServiceTest {
         fakeWeather.setMain(mainInfo);
         fakeWeather.setWeather(List.of(weatherDetail));
 
-        when(weatherApiClient.fetchCurrentWeatherByName("CityX")).thenReturn(fakeWeather);
+        when(weatherApiClientImpl.fetchCurrentWeatherByName("CityX")).thenReturn(fakeWeather);
 
         LocationDto expectedDto = new LocationDto(200L, "CityX", 7L, 33.0, 44.0, 12.5);
         when(locationPersistenceService.getOrCreate(
@@ -120,7 +120,7 @@ class LocationServiceTest {
 
         assertThat(result).isEqualTo(expectedDto);
 
-        verify(weatherApiClient).fetchCurrentWeatherByName("CityX");
+        verify(weatherApiClientImpl).fetchCurrentWeatherByName("CityX");
         verify(locationPersistenceService).getOrCreate(user, "CityX", 33.0, 44.0, 12.5);
     }
 
@@ -196,7 +196,7 @@ class LocationServiceTest {
         gr2.setLon(56.7);
         gr2.setCountry("N/A");
         gr2.setState("N/A");
-        when(weatherApiClient.fetchCurrentGeocodingByName("Query")).thenReturn(List.of(gr1, gr2));
+        when(weatherApiClientImpl.fetchCurrentGeocodingByName("Query")).thenReturn(List.of(gr1, gr2));
 
         LocationSearchResultDto dto1 = new LocationSearchResultDto("CityA", 12.3, 45.6, "N/A", "N/A");
         LocationSearchResultDto dto2 = new LocationSearchResultDto("CityB", 23.4, 56.7, "N/A", "N/A");
@@ -206,7 +206,7 @@ class LocationServiceTest {
         List<LocationSearchResultDto> result = locationService.searchLocationsListByName("Query");
 
         assertThat(result).containsExactly(dto1, dto2);
-        verify(weatherApiClient).fetchCurrentGeocodingByName("Query");
+        verify(weatherApiClientImpl).fetchCurrentGeocodingByName("Query");
         verify(weatherMapper).toDto(gr1);
         verify(weatherMapper).toDto(gr2);
     }

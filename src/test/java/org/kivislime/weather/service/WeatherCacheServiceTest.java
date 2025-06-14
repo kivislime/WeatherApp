@@ -1,12 +1,13 @@
-package org.kivislime.weather.client;
+package org.kivislime.weather.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.kivislime.weather.client.WeatherApiClientImpl;
+import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationWeatherDto;
 import org.kivislime.weather.entity.Location;
 import org.kivislime.weather.entity.User;
-import org.kivislime.weather.service.WeatherCacheService;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
