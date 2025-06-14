@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class IWeatherApiClientImplTest {
+class WeatherApiClientImplTest {
 
     @Mock
     private RestTemplate restTemplate;
 
-    private IWeatherApiClientImpl weatherApiClientImpl;
+    private WeatherApiClientImpl weatherApiClientImpl;
 
     private static final String BASE_URL      = "https://api.openweathermap.org/data/2.5/weather";
     private static final String GEOCODING_URL = "https://api.openweathermap.org/geo/1.0/direct";
@@ -41,7 +41,7 @@ class IWeatherApiClientImplTest {
     void setUp() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        weatherApiClientImpl = new IWeatherApiClientImpl(
+        weatherApiClientImpl = new WeatherApiClientImpl(
                 restTemplate,
                 objectMapper,
                 BASE_URL,

@@ -7,6 +7,7 @@ import org.kivislime.weather.exception.ExternalApiException;
 import org.kivislime.weather.exception.LocationNotFoundException;
 import org.kivislime.weather.exception.QuotaExceededException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -19,7 +20,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class IWeatherApiClientImpl implements IWeatherApiClient {
+@Profile({"dev", "prod"})
+public class WeatherApiClientImpl implements IWeatherApiClient {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
     private final String baseUrl;
@@ -27,7 +29,7 @@ public class IWeatherApiClientImpl implements IWeatherApiClient {
     private final String apiKey;
     private final int maxCities;
 
-    public IWeatherApiClientImpl(
+    public WeatherApiClientImpl(
             RestTemplate restTemplate,
             ObjectMapper objectMapper,
             @Value("${openweather.weather.url}") String baseUrl,
