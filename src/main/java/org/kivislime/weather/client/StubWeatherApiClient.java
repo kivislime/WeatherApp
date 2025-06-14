@@ -8,7 +8,6 @@ import java.util.List;
 
 @Component
 @Profile("test")
-@Primary
 public class StubWeatherApiClient implements IWeatherApiClient {
     @Override
     public List<GeocodingResponse> fetchCurrentGeocodingByName(String name) {
