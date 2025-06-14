@@ -26,7 +26,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {OpenWeatherTestConfig.class})
+@ContextConfiguration(classes = OpenWeatherTestConfig.class)
 @ActiveProfiles("test")
 class WeatherApiClientIntegrationTest {
 
