@@ -8,18 +8,6 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
-    public void onStartup(@NonNull ServletContext servletContext) throws ServletException {
-        String jvmProfile = System.getProperty("spring.profiles.active");
-        if (jvmProfile != null && !jvmProfile.isBlank()) {
-            servletContext.setInitParameter("spring.profiles.active", jvmProfile);
-        } else {
-            servletContext.setInitParameter("spring.profiles.active", "prod");
-        }
-
-        super.onStartup(servletContext);
-    }
-
-    @Override
     protected Class<?>[] getRootConfigClasses() {
         return new Class[]{
                 AppConfig.class,
@@ -27,7 +15,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
                 SchedulingConfig.class,
                 CacheConfig.class,
                 ProdConfig.class,
-                DevConfig.class};
+                DevConfig.class,
+                TestConfig.class};
     }
 
     @Override
