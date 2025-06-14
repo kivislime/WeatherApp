@@ -1,7 +1,8 @@
 package org.kivislime.weather.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.kivislime.weather.client.WeatherApiClient;
+import org.kivislime.weather.client.IWeatherApiClient;
+import org.kivislime.weather.client.WeatherApiClientImpl;
 import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationWeatherDto;
 import org.kivislime.weather.entity.Location;
@@ -12,12 +13,12 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class WeatherCacheService {
-    private final WeatherApiClient weatherApiClient;
+    private final IWeatherApiClient weatherApiClient;
     private final String iconBaseUrl;
 
-    public WeatherCacheService(WeatherApiClient weatherApiClient,
+    public WeatherCacheService(IWeatherApiClient weatherApiClient1,
                                @Value("${openweather.icon-base-url}") String iconBaseUrl) {
-        this.weatherApiClient = weatherApiClient;
+        this.weatherApiClient = weatherApiClient1;
         this.iconBaseUrl = iconBaseUrl;
     }
 

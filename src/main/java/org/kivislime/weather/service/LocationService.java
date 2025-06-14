@@ -2,7 +2,8 @@ package org.kivislime.weather.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.client.GeocodingResponse;
-import org.kivislime.weather.client.WeatherApiClient;
+import org.kivislime.weather.client.IWeatherApiClient;
+import org.kivislime.weather.client.WeatherApiClientImpl;
 import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationDto;
 import org.kivislime.weather.dto.LocationSearchResultDto;
@@ -27,15 +28,14 @@ import java.util.stream.Collectors;
 public class LocationService {
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
-    private final WeatherApiClient weatherApiClient;
+    private final IWeatherApiClient weatherApiClient;
     private final WeatherMapper weatherMapper;
     private final WeatherCacheService weatherCacheService;
     private final ExecutorService executorService;
     private final LocationPersistenceService locationPersistenceService;
 
     public LocationService(LocationRepository locationRepository,
-                           UserRepository userRepository,
-                           WeatherApiClient weatherApiClient,
+                           UserRepository userRepository, IWeatherApiClient weatherApiClient,
                            WeatherMapper weatherMapper,
                            WeatherCacheService weatherCacheService,
                            ExecutorService executorService,
