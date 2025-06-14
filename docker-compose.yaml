@@ -3,6 +3,8 @@ services:
   db:
     image: postgres:latest
     container_name: postgres_db
+    profiles:
+      - prod
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pass
@@ -11,24 +13,16 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-    networks:
-      - weather_app_network
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: tomcat_app
-    depends_on:
-      - db
+    environment:
+      - SPRING_PROFILES_ACTIVE=test
     ports:
       - "8080:8080"
-    networks:
-      - weather_app_network
 
 volumes:
   postgres_data:
-
-networks:
-  weather_app_network:
-    driver: bridge
