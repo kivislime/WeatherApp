@@ -3,7 +3,6 @@ package org.kivislime.weather.service;
 import lombok.extern.slf4j.Slf4j;
 import org.kivislime.weather.client.GeocodingResponse;
 import org.kivislime.weather.client.IWeatherApiClient;
-import org.kivislime.weather.client.WeatherApiClientImpl;
 import org.kivislime.weather.client.WeatherResponse;
 import org.kivislime.weather.dto.LocationDto;
 import org.kivislime.weather.dto.LocationSearchResultDto;

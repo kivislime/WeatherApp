@@ -1,7 +1,5 @@
 package org.kivislime.weather.config;
 
-import jakarta.servlet.ServletContext;
-import jakarta.servlet.ServletException;
 import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 

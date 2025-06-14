@@ -1,5 +1,4 @@
 package org.kivislime.weather.repository;
-//import org.springframework.
 
 import org.kivislime.weather.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
