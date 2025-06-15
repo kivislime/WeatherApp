@@ -23,20 +23,13 @@ public class UserService {
 
     @Transactional
     public UserDto registrationUser(String login, String password) {
-        Optional<User> userOptional = userRepository.findByLogin(login);
-
-        userOptional.ifPresent(user -> {
-            throw new UserAlreadyExistsException(login);
-        });
-
         User user = new User();
         try {
             user.setLogin(login);
             user.setPassword(PasswordUtil.hashPassword(password));
             userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
-            user = userRepository.findByLogin(login)
-                    .orElseThrow(() -> new UserAlreadyExistsException("Unique constraint failed but record not found"));
+            throw new UserAlreadyExistsException("Unique constraint failed but record not found");
         }
         log.info("User registration successful: {}", login);
         return userMapper.toDto(user);
