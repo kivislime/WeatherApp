@@ -46,7 +46,13 @@
     * `application.properties` (common settings)
     * `application-dev.properties` (development overrides)
 
-3. **Launch with Docker Compose**
+   
+3. **Create your secrets.properties**
+  ```bash
+   openweather.api-key=YOUR_API_KEY
+   ```
+
+4. **Launch with Docker Compose**
 
    ```bash
    docker compose --profile dev up --build -d
@@ -59,7 +65,7 @@
       docker compose --profile prod up --build -d
       ```
 
-4. **Access the application**
+5. **Access the application**
    Open your browser to:
 
    ```
