@@ -28,13 +28,15 @@ public class LocationPersistenceService {
 
     @Transactional
     public LocationDto getOrCreate(User user, String name, Double lat, Double lon, Double temp) {
+        LocationDto location = locationRepository.findByUserIdAndLatitudeAndLongitude(user.getId(), lat, lon)
+                .map(existing -> locationMapper.toDto(existing, temp))
+                .orElseGet(() -> tryCreateLocation(user, name, lat, lon, temp));
+
         if (locationRepository.countByUser(user) >= maxLocationsPerUser) {
             throw new LocationLimitExceededException("user_id: " + user.getId());
         }
 
-        return locationRepository.findByUserIdAndLatitudeAndLongitude(user.getId(), lat, lon)
-                .map(existing -> locationMapper.toDto(existing, temp))
-                .orElseGet(() -> tryCreateLocation(user, name, lat, lon, temp));
+        return location;
     }
 
     private LocationDto tryCreateLocation(User user, String name, Double lat, Double lon, Double temp) {
