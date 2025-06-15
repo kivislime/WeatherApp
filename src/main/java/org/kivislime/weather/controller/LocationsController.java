@@ -31,7 +31,7 @@ public class LocationsController {
         return "index";
     }
 
-    @GetMapping("/locations/search")
+    @GetMapping("/locations/search")    
     public String searchWeather(@RequestParam(name = "name", required = false) String name,
                                 Model model) {
         if (name != null && !name.isBlank()) {
