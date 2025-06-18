@@ -37,7 +37,11 @@
     <div class="container mt-4">
         <div th:if="${deleteError}" class="alert alert-danger" role="alert"
              th:text="${deleteError}">
-            Ошибка при удалении
+            Error when deleting
+        </div>
+
+        <div th:if="${tooManyLocations}" class="alert alert-warning" role="alert">
+            You’ve reached the maximum of 5 saved locations. Please delete one before adding another.
         </div>
 
         <form th:action="@{/locations/search}" method="get" class="d-flex my-4">
@@ -55,7 +59,8 @@
                         class="btn btn-outline-secondary btn-sm clear-input-button"
                         type="button"
                         onclick="this.previousElementSibling.value=''"
-                >&times;</button>
+                >&times;
+                </button>
             </div>
             <button class="btn btn-outline-success" type="submit">Search</button>
         </form>

@@ -86,17 +86,6 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void handleLocationLimitExceeded_ShouldReturn429View() {
-        LocationLimitExceededException ex = new LocationLimitExceededException("limit 5 reached");
-
-        ModelAndView mav = handler.handleLocationLimitExceeded(ex);
-
-        assertThat(mav.getViewName()).isEqualTo("error");
-        assertThat(mav.getModel()).containsEntry("statusCode", 429);
-        assertThat(mav.getModel()).containsEntry("exceptionMessage", "Too many locations. Please remove one before adding another");
-    }
-
-    @Test
     void handleExternalApiError_ShouldReturn502View() {
         ExternalApiException ex = new ExternalApiException("api down");
 

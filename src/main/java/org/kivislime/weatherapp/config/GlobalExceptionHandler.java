@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Slf4j
 @ControllerAdvice
@@ -47,9 +48,11 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(LocationLimitExceededException.class)
-    public ModelAndView handleLocationLimitExceeded(LocationLimitExceededException ex) {
+    public String handleLocationLimitExceeded(LocationLimitExceededException ex,
+                                              RedirectAttributes ra) {
         log.error("Location limit exceeded: {}", ex.getMessage(), ex);
-        return buildErrorView(429, "Too many locations. Please remove one before adding another");
+        ra.addFlashAttribute("tooManyLocations", true);
+        return "redirect:/locations";
     }
 
     @ExceptionHandler(ExternalApiException.class)
