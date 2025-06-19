@@ -53,17 +53,14 @@
    ```
 
 4. **Launch with Docker Compose**
-
-   ```bash
-   docker compose --profile dev up --build -d
-   ```
-
-    * `--profile dev` will start both the database and app services.
-    * For production, use:
-
-      ```bash
-      docker compose --profile prod up --build -d
-      ```
+* DEV: in‑memory H2 + app
+```bash
+docker compose up --profile dev --build -d
+```
+* PROD: PostgreSQL + app + Liquibase
+```bash
+docker compose up --profile prod --build -d
+```
 
 5. **Access the application**
    Open your browser to:
