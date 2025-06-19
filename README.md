@@ -46,21 +46,24 @@
     * `application.properties` (common settings)
     * `application-dev.properties` (development overrides)
 
-   
+
 3. **Create your secrets.properties**
+
   ```bash
    openweather.api-key=YOUR_API_KEY
    ```
 
 4. **Launch with Docker Compose**
-
+    * If SPRING_PROFILES_ACTIVE=dev use
    ```bash
-   docker compose --profile dev up --build -d
+    docker compose up --build -d
    ```
-
-    * `--profile dev` will start both the database and app services.
+   or:
+   ```bash
+    docker compose --profile dev up --build -d
+   ```
     * For production, use:
-
+    * `--profile prod` will start both the database and app services.
       ```bash
       docker compose --profile prod up --build -d
       ```
@@ -77,21 +80,3 @@
 * **dev** — H2 (in-memory), local development.
 * **prod** — real database (PostgreSQL), Liquibase migrations enabled.
 * **test** — in-memory database for integration tests.
-
-## 🧪 Testing
-
-* **Unit tests** for service layer:
-
-  ```bash
-  mvn test -Dtest=*ServiceTest
-  ```
-* **Integration tests** with Spring context:
-
-  ```bash
-  mvn verify -Dskip.unit=false
-  ```
-* **HTTP client tests** for OpenWeatherMap integration:
-
-  ```bash
-  mvn test -Dtest=WeatherApiClientIntegrationTest
-  ```
