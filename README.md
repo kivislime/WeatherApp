@@ -46,22 +46,24 @@
     * `application.properties` (common settings)
     * `application-dev.properties` (development overrides)
 
-
+   
 3. **Create your secrets.properties**
-
   ```bash
    openweather.api-key=YOUR_API_KEY
    ```
 
 4. **Launch with Docker Compose**
-* DEV: in‑memory H2 + app
+
    ```bash
-   docker compose up --profile dev --build -d
+   docker compose --profile dev up --build -d
    ```
-* PROD: PostgreSQL + app + Liquibase
-  ```bash
-  docker compose --profile prod up --build -d
-  ```
+
+    * `--profile dev` will start both the database and app services.
+    * For production, use:
+
+      ```bash
+      docker compose --profile prod up --build -d
+      ```
 
 5. **Access the application**
    Open your browser to:
@@ -75,3 +77,21 @@
 * **dev** — H2 (in-memory), local development.
 * **prod** — real database (PostgreSQL), Liquibase migrations enabled.
 * **test** — in-memory database for integration tests.
+
+## 🧪 Testing
+
+* **Unit tests** for service layer:
+
+  ```bash
+  mvn test -Dtest=*ServiceTest
+  ```
+* **Integration tests** with Spring context:
+
+  ```bash
+  mvn verify -Dskip.unit=false
+  ```
+* **HTTP client tests** for OpenWeatherMap integration:
+
+  ```bash
+  mvn test -Dtest=WeatherApiClientIntegrationTest
+  ```
